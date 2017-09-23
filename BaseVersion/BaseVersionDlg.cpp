@@ -6,7 +6,7 @@
 #include "BaseVersion.h"
 #include "BaseVersionDlg.h"
 #include "afxdialogex.h"
-
+#include "Config.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -128,7 +128,7 @@ void CBaseVersionDlg::DlgPaintInit(void)
 	int WinDlgWidth = 0;
 	int WinDlgHeight = 0;
     CImage mImage;  
-    if(mImage.Load(_T("../MyResource/背景1.jpg")) == S_OK)  {
+    if(mImage.Load(_T(CFG_CSTRING_BGP)) == S_OK)  {
         //这里让窗口保持和背景图一致 
 		WinDlgWidth = mImage.GetWidth();
 		WinDlgHeight = mImage.GetHeight();
@@ -136,10 +136,9 @@ void CBaseVersionDlg::DlgPaintInit(void)
 
 		GetDlgItem( IDC_EDIT_Debug )->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口
 		mImage.Draw(GetDC()->GetSafeHdc(),CRect(0,0,WinDlgWidth,WinDlgHeight));//背景
-
 	}
-
 }
+
 void CBaseVersionDlg::OnPaint()
 {
 	if (IsIconic())
