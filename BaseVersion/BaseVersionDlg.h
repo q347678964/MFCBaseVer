@@ -37,4 +37,5 @@ public:
 	void CBaseVersionDlg::DlgPaintInit(void);
 	BOOL CBaseVersionDlg::Printf(CString string);
 	afx_msg void OnBnClickedButtonOpenfile();
+	afx_msg void OnBnClickedButtonTest();
 };

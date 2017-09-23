@@ -8,7 +8,7 @@
 #include "afxdialogex.h"
 #include "Config.h"
 #include "FormatChange.h"
-
+#include "Example.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(CBaseVersionDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_BUTTON_OpenFile, &CBaseVersionDlg::OnBnClickedButtonOpenfile)
+	ON_BN_CLICKED(IDC_BUTTON_Test, &CBaseVersionDlg::OnBnClickedButtonTest)
 END_MESSAGE_MAP()
 
 
@@ -105,7 +106,7 @@ BOOL CBaseVersionDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 	// TODO: 在此添加额外的初始化代码
-	this->Printf((CString)("初始化窗体完成!\r\n"));
+	this->Printf((CString)("[Dialog]初始化窗体完成!\r\n"));
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -144,7 +145,15 @@ void CBaseVersionDlg::DlgPaintInit(void)
 
 		pWnd[2] = GetDlgItem(IDC_BUTTON_OpenFile);
 		pWnd[2]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
-		((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
+		((CButton *)GetDlgItem(IDC_BUTTON_OpenFile))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
+		pWnd[2]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+		ScreenToClient(RectTemp);
+
+		pWnd[3] = GetDlgItem(IDC_BUTTON_Test);
+		pWnd[3]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
+		((CButton *)GetDlgItem(IDC_BUTTON_Test))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
+
+		
 		//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
 		//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
 		//SetIcon 按钮操作函数
@@ -205,7 +214,7 @@ void CBaseVersionDlg::OnPaint()
 		CDialog::OnPaint();
 	}
 
-	this->Printf((CString)("重新绘制完成!\r\n"));
+	this->Printf((CString)("[Dialog]重新绘制完成!\r\n"));
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -260,11 +269,13 @@ HBRUSH CBaseVersionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr; 
 }
 
+
 BOOL CBaseVersionDlg::Printf(CString string){
 	static CString DebugCStringAll;
-	string = (CString)"[Dlg]" + string;
 	DebugCStringAll += string;
 	SetDlgItemText(IDC_EDIT_Debug,DebugCStringAll);
+	CEdit *DebugEdit = (CEdit*)GetDlgItem(IDC_EDIT_Debug);
+	DebugEdit->LineScroll(DebugEdit->GetLineCount()-1,0); 
 	return 0;
 }
 
@@ -285,4 +296,13 @@ void CBaseVersionDlg::OnBnClickedButtonOpenfile()
         SetDlgItemText(IDC_EDIT_Path, g_Path);  
 		UpdateWindow();
     }		
+}
+
+
+void CBaseVersionDlg::OnBnClickedButtonTest()
+{
+	Example Ex;
+	Ex.FileOperation();
+	Ex.TimerTest();
+	Ex.ThreadTest();
 }

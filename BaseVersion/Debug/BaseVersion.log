@@ -1,4 +1,4 @@
-﻿Build started 2017/9/23 16:27:24.
+﻿Build started 2017/9/23 17:27:50.
      1>Project "F:\project\BaseVersion\BaseVersion\BaseVersion\BaseVersion.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\BaseVersion.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -15,6 +15,7 @@
          Debug\BaseVersion.exe.embed.manifest.res
          Debug\BaseVersion.obj
          Debug\BaseVersionDlg.obj
+         Debug\Example.obj
          Debug\FormatChange.obj
          Debug\stdafx.obj
        Manifest:
@@ -30,4 +31,4 @@
 
 生成成功。
 
-Time Elapsed 00:00:00.93
+Time Elapsed 00:00:01.12

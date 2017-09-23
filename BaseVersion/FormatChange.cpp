@@ -1,13 +1,13 @@
 #include "stdafx.h"
+#include "resource.h"
+
 #include "FormatChange.h"
 
 
-FormatChange::FormatChange()
-{
+FormatChange::FormatChange(){
 
 }
-FormatChange::~FormatChange()
-{
+FormatChange::~FormatChange(){
 
 }
 void FormatChange::CImage2CBitmap(CImage &Image,CBitmap &Bitmap){

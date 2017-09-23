@@ -94,8 +94,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\MyResource\背景2.bmp" />
-    <None Include="..\MyResource\背景3.bmp" />
     <None Include="ReadMe.txt" />
     <None Include="res\BaseVersion.ico" />
     <None Include="res\BaseVersion.rc2" />
@@ -105,6 +103,7 @@
     <ClInclude Include="BaseVersion.h" />
     <ClInclude Include="BaseVersionDlg.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Example.h" />
     <ClInclude Include="FormatChange.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -113,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="BaseVersion.cpp" />
     <ClCompile Include="BaseVersionDlg.cpp" />
+    <ClCompile Include="Example.cpp" />
     <ClCompile Include="FormatChange.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
