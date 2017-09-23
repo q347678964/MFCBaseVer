@@ -7,6 +7,8 @@
 #include "BaseVersionDlg.h"
 #include "afxdialogex.h"
 #include "Config.h"
+#include "FormatChange.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -63,6 +65,7 @@ BEGIN_MESSAGE_MAP(CBaseVersionDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_BUTTON_OpenFile, &CBaseVersionDlg::OnBnClickedButtonOpenfile)
 END_MESSAGE_MAP()
 
@@ -73,9 +76,9 @@ BOOL CBaseVersionDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
-	SetIcon(m_hIcon, TRUE); // Set big icon  
-	SetIcon(m_hIcon, FALSE); // Set small icon; 
+	//m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	//SetIcon(m_hIcon, TRUE); // Set big icon  
+	//SetIcon(m_hIcon, FALSE); // Set small icon; 
 
 	// 将“关于...”菜单项添加到系统菜单中。
 
@@ -101,7 +104,6 @@ BOOL CBaseVersionDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-
 	// TODO: 在此添加额外的初始化代码
 	this->Printf((CString)("初始化窗体完成!\r\n"));
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -120,42 +122,67 @@ void CBaseVersionDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// 如果向对话框添加最小化按钮，则需要下面的代码
-//  来绘制该图标。对于使用文档/视图模型的 MFC 应用程序，
-//  这将由框架自动完成。
 void CBaseVersionDlg::DlgPaintInit(void)
 {
-	CWnd *pWnd[20];  
-	int WinDlgWidth = 0;
-	int WinDlgHeight = 0;
-    CImage mImage;  
-	CRect RectTemp;
+	CImage mImage;  
     if(mImage.Load(_T(CFG_CSTRING_BGP)) == S_OK)  {
+		CWnd *pWnd[20];  
+		CRect RectTemp;
         //这里让窗口保持和背景图一致 
-		WinDlgWidth = mImage.GetWidth();
-		WinDlgHeight = mImage.GetHeight();
+		int WinDlgWidth = mImage.GetWidth();
+		int WinDlgHeight = mImage.GetHeight();
 		SetWindowPos(NULL,0,0,WinDlgWidth,WinDlgHeight,SWP_NOMOVE);
 		pWnd[0] = GetDlgItem(IDC_EDIT_Debug);
-		pWnd[0]->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口
+		pWnd[0]->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口,根据窗体大小来变换
 		pWnd[0]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
 		ScreenToClient(RectTemp);
 
 		pWnd[1] = GetDlgItem(IDC_EDIT_Path);
-		pWnd[1]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口
+		pWnd[1]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口，只改变坐标，不改变大小
 		pWnd[1]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
 		ScreenToClient(RectTemp);
 
 		pWnd[2] = GetDlgItem(IDC_BUTTON_OpenFile);
-		pWnd[2]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，不改变大小
+		pWnd[2]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
+		((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
+		//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
+		//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
+		//SetIcon 按钮操作函数
 
-		mImage.Draw(GetDC()->GetSafeHdc(),CRect(0,0,WinDlgWidth,WinDlgHeight));//背景
+		//mImage.Draw(GetDC()->GetSafeHdc(),CRect(0,0,WinDlgWidth,WinDlgHeight));//背景，不能用这种方法绘制，会闪烁
 
+		{	//背景绘制
+			CBitmap	bmpBackground;		//声明一个位图句柄
+			FormatChange FC;
+			FC.CImage2CBitmap(mImage,bmpBackground);
+			//bmpBackground.LoadBitmap(IDB_BITMAP1);   //加载图片到位图句柄	
 
+			CRect   WinDlg;   
+			GetClientRect(&WinDlg);			//获取窗体的大小
+
+			CDC *BGPDCMem = new CDC;;		//申请内存图片CDC
+			CPaintDC WinDlgDc(this);					//这段代码用于设置背景图，初始化DC绘制对象为窗体本身
+			BGPDCMem->CreateCompatibleDC(&WinDlgDc);   //创建一个与显示器设备内容兼容的内存设备内容
+			BGPDCMem->SetBkMode(TRANSPARENT);
+			BGPDCMem->SelectObject(&bmpBackground); //用SelectObject将位图选入内存设备内容  
+#if 0	//拉伸方式绘制
+			BITMAP   bitmap;	//BITMAP结构用于存放位图信息
+			bmpBackground.GetBitmap(&bitmap);	//从图片中获取图片的宽高到bitmap
+			WinDlgDc.StretchBlt(0,0,WinDlg.Width(),WinDlg.Height(),&g_BGPDCMem,0,0,bitmap.bmWidth,bitmap.bmHeight,SRCCOPY); //将DC内的图片内容拉伸之后PO窗体上,Stretch:拉伸
+#else
+			WinDlgDc.BitBlt(0,0,WinDlg.Width(),WinDlg.Height(),BGPDCMem,0,0,SRCCOPY);	//将内存的图片po到窗体上
+#endif
+			delete BGPDCMem;
+		}
 	}
+
+
+
 }
 
 void CBaseVersionDlg::OnPaint()
 {
+	this->DlgPaintInit();
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // 用于绘制的设备上下文
@@ -175,10 +202,10 @@ void CBaseVersionDlg::OnPaint()
 	}
 	else
 	{
-		this->DlgPaintInit();
 		CDialog::OnPaint();
 	}
-	//this->Printf((CString)("绘制完成!\r\n"));
+
+	this->Printf((CString)("重新绘制完成!\r\n"));
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -199,12 +226,39 @@ BOOL CBaseVersionDlg::PreTranslateMessage(MSG* pMsg)
         case'I':  
             //if (::GetKeyState(VK_CONTROL) < 0)//如果是Shift+X这里就  
                 //改成VK_SHIFT  
-                MessageBox(_T("hello"));  
+                MessageBox(_T("Hello"));  
             return TRUE;  
         }  
     }  
     return CDialog::PreTranslateMessage(pMsg);  
 }  
+
+HBRUSH CBaseVersionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{ 
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor); 
+	 switch (pWnd->GetDlgCtrlID()){
+		case IDC_EDIT_Debug:
+			pDC->SetTextColor(EDIT_PRINT_TEXT_RGB); //设置字体颜色
+			pDC->SetBkMode(TRANSPARENT);	//设置字体背景为透明，这样才能直接带看Edit的颜色
+			HBRUSH hbr= CreateSolidBrush(EDIT_PRINT_BG_RGB);// 设置背景色画刷
+			return hbr;
+		break;
+	 }
+	// TODO: Change any attributes of the DC here
+	if (nCtlColor==CTLCOLOR_STATIC || nCtlColor==CTLCOLOR_EDIT)//如果当前控件属于静态文本
+	{ 
+		pDC->SetTextColor(EDIT_PRINT_TEXT_RGB); //设置字体颜色
+		pDC->SetBkMode(TRANSPARENT);	//设置字体背景为透明，这样才能直接带看Edit的颜色
+		HBRUSH hbr= CreateSolidBrush(EDIT_PRINT_BG_RGB);// 设置背景色画刷
+		return hbr;
+	} 
+	else if (nCtlColor==CTLCOLOR_BTN) //如果当前控件属于按钮
+	{ 
+
+	} 
+	// TODO: Return a different brush if the default is not desired
+	return hbr; 
+}
 
 BOOL CBaseVersionDlg::Printf(CString string){
 	static CString DebugCStringAll;
@@ -229,7 +283,6 @@ void CBaseVersionDlg::OnBnClickedButtonOpenfile()
         // 如果点击了文件对话框上的“打开”按钮，则将选择的文件路径显示到编辑框里   
         g_Path = fileDlg.GetPathName();   
         SetDlgItemText(IDC_EDIT_Path, g_Path);  
-		/*Get size*/
 		UpdateWindow();
     }		
 }

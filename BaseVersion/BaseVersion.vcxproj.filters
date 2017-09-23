@@ -28,6 +28,9 @@
     <None Include="..\MyResource\背景3.bmp">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="..\MyResource\背景2.bmp">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseVersion.h">
@@ -48,6 +51,9 @@
     <ClInclude Include="Config.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FormatChange.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseVersion.cpp">
@@ -57,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FormatChange.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

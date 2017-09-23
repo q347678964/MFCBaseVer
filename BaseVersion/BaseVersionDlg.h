@@ -29,9 +29,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-	BOOL CBaseVersionDlg::PreTranslateMessage(MSG* pMsg);
-
-
+	BOOL CBaseVersionDlg::PreTranslateMessage(MSG* pMsg);			//重载消息传输函数
+	HBRUSH CBaseVersionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);	//重载颜色控制函数
 public:
 	CString g_Path;
 
