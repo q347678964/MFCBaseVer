@@ -150,10 +150,17 @@ void CBaseVersionDlg::DlgPaintInit(void)
 		ScreenToClient(RectTemp);
 
 		pWnd[3] = GetDlgItem(IDC_BUTTON_Test);
-		pWnd[3]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
+		pWnd[3]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//测试按钮，只改变坐标，不改变大小
 		((CButton *)GetDlgItem(IDC_BUTTON_Test))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
 
-		
+		pWnd[1]->GetWindowRect(RectTemp);//进度条放在路径窗口下面
+		ScreenToClient(RectTemp);
+		pWnd[3] = GetDlgItem(IDC_PROGRESS1);
+		pWnd[3]->SetWindowPos( NULL,RectTemp.left,RectTemp.bottom+10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//进度条，只改变坐标，不改变大小
+		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetRange(0,100);//进度条数值范围0~100
+		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetStep(1);//进度条步进1
+		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetPos(0);//当前进度0
+
 		//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
 		//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
 		//SetIcon 按钮操作函数
@@ -270,6 +277,11 @@ HBRUSH CBaseVersionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 }
 
 
+void CBaseVersionDlg::ProcessCtrl(int Num)
+{
+	((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetPos(Num);//进度条数值范围0~100
+}
+
 BOOL CBaseVersionDlg::Printf(CString string){
 	static CString DebugCStringAll;
 	DebugCStringAll += string;
@@ -305,4 +317,7 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Ex.FileOperation();
 	Ex.TimerTest();
 	Ex.ThreadTest();
+	Ex.ProcessTest();
+	Ex.NetTest();
+	Ex.WinCMDTest();
 }
