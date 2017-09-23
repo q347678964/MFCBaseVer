@@ -33,6 +33,9 @@ protected:
 
 
 public:
+	CString g_Path;
+
 	void CBaseVersionDlg::DlgPaintInit(void);
 	BOOL CBaseVersionDlg::Printf(CString string);
+	afx_msg void OnBnClickedButtonOpenfile();
 };

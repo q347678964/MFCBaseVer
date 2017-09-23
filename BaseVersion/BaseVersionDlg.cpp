@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CBaseVersionDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_OpenFile, &CBaseVersionDlg::OnBnClickedButtonOpenfile)
 END_MESSAGE_MAP()
 
 
@@ -124,18 +125,32 @@ void CBaseVersionDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  这将由框架自动完成。
 void CBaseVersionDlg::DlgPaintInit(void)
 {
-	CWnd *pWnd;  
+	CWnd *pWnd[20];  
 	int WinDlgWidth = 0;
 	int WinDlgHeight = 0;
     CImage mImage;  
+	CRect RectTemp;
     if(mImage.Load(_T(CFG_CSTRING_BGP)) == S_OK)  {
         //这里让窗口保持和背景图一致 
 		WinDlgWidth = mImage.GetWidth();
 		WinDlgHeight = mImage.GetHeight();
 		SetWindowPos(NULL,0,0,WinDlgWidth,WinDlgHeight,SWP_NOMOVE);
+		pWnd[0] = GetDlgItem(IDC_EDIT_Debug);
+		pWnd[0]->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口
+		pWnd[0]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+		ScreenToClient(RectTemp);
 
-		GetDlgItem( IDC_EDIT_Debug )->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口
+		pWnd[1] = GetDlgItem(IDC_EDIT_Path);
+		pWnd[1]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口
+		pWnd[1]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+		ScreenToClient(RectTemp);
+
+		pWnd[2] = GetDlgItem(IDC_BUTTON_OpenFile);
+		pWnd[2]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，不改变大小
+
 		mImage.Draw(GetDC()->GetSafeHdc(),CRect(0,0,WinDlgWidth,WinDlgHeight));//背景
+
+
 	}
 }
 
@@ -197,4 +212,24 @@ BOOL CBaseVersionDlg::Printf(CString string){
 	DebugCStringAll += string;
 	SetDlgItemText(IDC_EDIT_Debug,DebugCStringAll);
 	return 0;
+}
+
+void CBaseVersionDlg::OnBnClickedButtonOpenfile()
+{
+	//   TCHAR szFilter[] = _T("文本文件(*.txt)|*.txt|所有文件(*.*)|*.*||");  
+	//	注意;代表两个过滤器并行,结尾是双||
+	//  注释1|过滤器1.2;过滤器1.2|注释2|过滤器2||
+	TCHAR szFilter[] = _T("过滤器名字|*.jpg;*.bmp;*.png||");
+    // 构造打开文件对话框   
+    CFileDialog fileDlg(TRUE, _T("xls"), NULL, 0, szFilter, this);   
+
+    // 显示打开文件对话框   
+    if (IDOK == fileDlg.DoModal())   
+    {   
+        // 如果点击了文件对话框上的“打开”按钮，则将选择的文件路径显示到编辑框里   
+        g_Path = fileDlg.GetPathName();   
+        SetDlgItemText(IDC_EDIT_Path, g_Path);  
+		/*Get size*/
+		UpdateWindow();
+    }		
 }

@@ -1,14 +1,12 @@
-﻿Build started 2017/9/23 12:57:47.
+﻿Build started 2017/9/23 13:20:19.
      1>Project "F:\project\BaseVersion\BaseVersion\BaseVersion\BaseVersion.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\BaseVersion.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
          All outputs are up-to-date.
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\BaseVersion.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt BaseVersionDlg.cpp
-         BaseVersionDlg.cpp
-     1>f:\project\baseversion\baseversion\baseversion\baseversiondlg.cpp(127): warning C4101: “pWnd”: 未引用的局部变量
-       ResourceCompile:
          All outputs are up-to-date.
+       ResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IDebug\ /nologo /fo"Debug\BaseVersion.res" BaseVersion.rc 
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
@@ -30,4 +28,4 @@
 
 生成成功。
 
-Time Elapsed 00:00:00.75
+Time Elapsed 00:00:00.73
