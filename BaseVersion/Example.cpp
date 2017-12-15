@@ -4,6 +4,8 @@
 #include "FormatChange.h"
 #include "Example.h"
 #include "BaseVersionDlg.h"
+
+
 /*************************************************************************************/
 //¹¹Ôì¡¢Îö¹¹º¯Êý
 Example::Example(){
@@ -141,4 +143,52 @@ void Example::NetTest(void){
 void Example::WinCMDTest(void){
 	this->Printf((CString)"Windows CMDÃüÁî²âÊÔ:ipconfig\r\n");
 	WinExec("ipconfig", SW_HIDE);
+}
+
+void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT32 Endx,UINT32 Endy){
+	CvPoint pt2[4] = {cvPoint(Startx,Starty),cvPoint(Endx,Starty),cvPoint(Endx,Endy),cvPoint(Startx,Endy)};
+	cvFillConvexPoly(img,pt2,4,CV_RGB(0,0,0)); 
+}
+
+void Example::OpencvTest(void)
+{
+	IplImage *img = cvLoadImage("../Input/OpencvTest.jpg");
+	cvNamedWindow("Opencv²âÊÔ",CV_WINDOW_AUTOSIZE);
+	cvShowImage("Opencv²âÊÔ",img);
+
+	IplImage *img2 = cvCreateImage(cvSize(800,800),8,3);
+
+	{	//Ð´×Ö²âÊÔ
+		char temp[16];
+		int x  = 13 , y = 14;
+		CvPoint pt = cvPoint(20,20); 
+		CvFont font;   
+		cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, CV_AA);   
+		sprintf(temp,"(%d,%d)",x,y);   
+		cvPutText(img2,temp, pt, &font, CV_RGB(255,0,0));   
+	}
+	
+	{	//»­Ô²²âÊÔ,5ÊÇ´óÐ¡
+		CvPoint pt = cvPoint(50,50); 
+		cvCircle(img2, pt, 5,CV_RGB(255,0,0) ,CV_FILLED, CV_AA, 0 );   
+	}
+
+	{	//»­Ïß²âÊÔ
+		cvLine(img2,cvPoint(100,100),cvPoint(200,200),CV_RGB(0,255,255));
+	}
+
+	{	//»­·½ÐÎ²âÊÔ
+        cvRectangle(img2, cvPoint(50,50), cvPoint(100,100), CV_RGB(255,255,255));  
+		//»­Ìî³äÐÎ×´
+		#define PointNum 4
+		CvPoint pt1[PointNum] = {cvPoint(200,200),cvPoint(300,210),cvPoint(230,260),cvPoint(210,300)};
+		cvFillConvexPoly(img2,pt1,PointNum,CV_RGB(250,0,0)); 
+
+		this->OpencvFillRectangle(img2,400,400,500,500);
+
+	}
+
+	cvNamedWindow("Opencv×Ô»æÍ¼",CV_WINDOW_AUTOSIZE);
+	cvShowImage("Opencv×Ô»æÍ¼",img2);
+
 }

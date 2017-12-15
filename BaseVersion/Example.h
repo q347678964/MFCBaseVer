@@ -1,6 +1,9 @@
 #ifndef EXAMPLE_H
 #define EXAMPLE_H
 
+#include "cv.h"
+#include "highgui.h"
+#include "CvvImage.h"
 
 class Example {
 
@@ -23,5 +26,9 @@ public:
 	void Example::NetTest(void);
 
 	void Example::WinCMDTest(void);
+
+	void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT32 Endx,UINT32 Endy);
+
+	void Example::OpencvTest(void);
 };
 #endif
