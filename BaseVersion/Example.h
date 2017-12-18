@@ -11,14 +11,19 @@ public:
 	Example();
 	~Example();
 
-	void Printf(CString Context);
+	void Example::Init(void);
+	void Example::Exit(void);
+
+	void Example::PrintfToFile(CString Context);
+	void Example::Printf(CString Context);
+
 	void Example::ProcessCtrl(int Num);
 
-	void FileOperation(void);
+	void Example::FileOperation(void);
 
-	void TimerTest(void);
+	void Example::TimerTest(void);
 
-	void ThreadTest(void);
+	void Example::ThreadTest(void);
 
 	void Example::ProcessTest(void);
 
@@ -30,5 +35,7 @@ public:
 	void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT32 Endx,UINT32 Endy);
 
 	void Example::OpencvTest(void);
+
+	void Example::FormatTest(void);
 };
 #endif

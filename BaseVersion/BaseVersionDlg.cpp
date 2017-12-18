@@ -321,4 +321,5 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Ex.NetTest();
 	Ex.WinCMDTest();
 	Ex.OpencvTest();
+	Ex.FormatTest();
 }

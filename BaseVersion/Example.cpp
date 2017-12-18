@@ -17,6 +17,19 @@ Example::~Example(){
 }
 /*************************************************************************************/
 //主窗体操作
+void Example::Init(void)
+{
+
+}
+void Example::Exit(void)
+{
+
+}
+
+void Example::PrintfToFile(CString Context){
+	
+}
+
 void Example::Printf(CString Context){
 	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
 	CString m_strTime = time.Format("[%H:%M:%S]");
@@ -191,4 +204,21 @@ void Example::OpencvTest(void)
 	cvNamedWindow("Opencv自绘图",CV_WINDOW_AUTOSIZE);
 	cvShowImage("Opencv自绘图",img2);
 
+}
+
+//主要是CString 是 UNICODE的格式.
+void Example::FormatTest(void){
+	FormatChange FormatHandle;
+	char TestChar[] = {"Hello\r\n"};
+	CString TestCString = FormatHandle.CharToCString(TestChar);			//Char->CString
+
+	CString TestCString2("How old are you?");
+	char TestChar2[100];
+	int Len = FormatHandle.CStringToChar(TestCString2,TestChar2);		//CString -> Char, Len = 17.
+
+	CString TestCString3("123456");
+	int TestInt = FormatHandle.CStringToInt(TestCString3);				//CString->Int
+
+	int TempNum = 112233;
+	CString TestCString4 = FormatHandle.IntToCString(TempNum);			//Int->CString
 }
