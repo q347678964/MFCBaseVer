@@ -10,10 +10,13 @@ class Example {
 public:
 	Example();
 	~Example();
+	HANDLE g_PrintfSemaphore;
+	FormatChange g_FormatHandle;
 
 	void Example::Init(void);
 	void Example::Exit(void);
 
+	void Example::LogPrintf(CString Context);
 	void Example::PrintfToFile(CString Context);
 	void Example::Printf(CString Context);
 

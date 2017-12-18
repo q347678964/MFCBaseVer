@@ -16,9 +16,10 @@ FormatChange::~FormatChange(){
 *	@Char		转换之后的存储地址，需要在外部开辟,建议和CString一样大.
 *	@Ret		转换之后的大小,
 */
+
 int FormatChange::CStringToChar(CString Context,char *Char){
-	int Len =WideCharToMultiByte(CP_ACP,0,Context,-1,NULL,0,NULL,NULL); //计算长度
-	WideCharToMultiByte(CP_ACP,0,Context,-1,Char,Len,NULL,NULL );	//转换
+	int Len =WideCharToMultiByte(CP_ACP,0,Context.GetBuffer(Context.GetLength()),-1,NULL,0,NULL,NULL); //计算长度
+	WideCharToMultiByte(CP_ACP,0,Context.GetBuffer(Context.GetLength()),-1,Char,Len,NULL,NULL );	//转换
 	return Len;
 }
 /*

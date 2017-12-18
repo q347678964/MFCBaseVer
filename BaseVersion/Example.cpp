@@ -9,7 +9,7 @@
 /*************************************************************************************/
 //构造、析构函数
 Example::Example(){
-	this->Printf((CString)"***********************\r\n");
+
 }
 
 Example::~Example(){
@@ -19,20 +19,52 @@ Example::~Example(){
 //主窗体操作
 void Example::Init(void)
 {
-
+	this->Printf((CString)"测试开始\r\n");
+	g_PrintfSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
 }
 void Example::Exit(void)
 {
-
+	this->Printf((CString)"测试结束\r\n");
 }
 
+int Sem = 1;
+void Example::LogPrintf(CString Context){
+	static int FirstInFlag = 1;
+
+	WaitForSingleObject(g_PrintfSemaphore, INFINITE);
+
+	char Data[1000];
+	int Len = g_FormatHandle.CStringToChar(Context,Data);
+
+	if(FirstInFlag){
+		FirstInFlag = 0;
+		CFile LogFile(_T("../Output/Log.txt"),CFile::modeCreate | CFile::modeReadWrite);
+		LogFile.Write(Data,Len);
+		LogFile.Close();
+	}else{
+		CFile LogFile(_T("../Output/Log.txt"),CFile::modeReadWrite);
+		LogFile.SeekToEnd();
+		LogFile.Write(Data,Len);
+		LogFile.Close();
+	}
+
+	ReleaseSemaphore(g_PrintfSemaphore, 1, NULL);
+}
+
+/*	PrintfToFile - 将Log打印到文件当中
+*	
+*/
 void Example::PrintfToFile(CString Context){
-	
+	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
+	CString m_strTime = time.Format(_T("[%H:%M:%S]"));
+
+	Context = m_strTime + (CString)("[Example]") + Context;
+    this->LogPrintf(Context);
 }
 
 void Example::Printf(CString Context){
 	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
-	CString m_strTime = time.Format("[%H:%M:%S]");
+	CString m_strTime = time.Format(_T("[%H:%M:%S]"));
 
 	Context = m_strTime + (CString)("[Example]") + Context;
     CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
@@ -49,22 +81,22 @@ void Example::ProcessCtrl(int Num){
 DWORD WINAPI ThreadProc(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->Printf((CString)"线程休眠\r\n");
+	Ex->PrintfToFile((CString)"线程休眠\r\n");
 	Sleep(1000);
-	Ex->Printf((CString)"线程结束\r\n");
+	Ex->PrintfToFile((CString)"线程结束\r\n");
 	return 0;
 }
 
 void Example::ThreadTest(void){
-	this->Printf((CString)"线程测试开始\r\n");
+	this->PrintfToFile((CString)"线程测试开始\r\n");
 	AfxBeginThread((AFX_THREADPROC)ThreadProc,this,THREAD_PRIORITY_HIGHEST);
-	this->Printf((CString)"线程已经创建\r\n");
+	this->PrintfToFile((CString)"线程已经创建\r\n");
 }
 /*************************************************************************************/
 //时间操作测试
 void Example::TimerTest(void){
 
-	this->Printf((CString)"时间测试开始\r\n");
+	this->PrintfToFile((CString)"时间测试开始\r\n");
 
 	clock_t TimeStart,TimeEnd;
 	unsigned int TimeSpend;
@@ -76,7 +108,7 @@ void Example::TimerTest(void){
 
 	CString TempCString;
 	TempCString.Format(_T("时间间隔:%u毫秒\r\n"),TimeSpend);
-	this->Printf(TempCString);
+	this->PrintfToFile(TempCString);
 
 	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
 #if 0
@@ -89,22 +121,22 @@ void Example::TimerTest(void){
 #endif
 	CString m_strTime = time.Format("%Y-%m-%d %H:%M:%S");
 	m_strTime += (CString)("\r\n");
-	this->Printf(m_strTime);
-	this->Printf((CString)"时间测试完成\r\n");
+	this->PrintfToFile(m_strTime);
+	this->PrintfToFile((CString)"时间测试完成\r\n");
 
 }
 
 /*************************************************************************************/
 //文件操作测试
 void Example::FileOperation(void){
-	this->Printf((CString)"文件操作测试开始\r\n");
+	this->PrintfToFile((CString)"文件操作测试开始\r\n");
 
 	const char data[] = {"This is a test program"};
 	CFile mFile(_T("../Output/Test.txt"),CFile::modeCreate | CFile::modeReadWrite);
 	mFile.Write(data,sizeof(data));
 	mFile.Close();
 
-	this->Printf((CString)"文件操作测试完成\r\n");
+	this->PrintfToFile((CString)"文件操作测试完成\r\n");
 
 }
 
@@ -113,12 +145,12 @@ void Example::FileOperation(void){
 DWORD WINAPI ProcessTestThread(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->Printf((CString)"进度条操作测试开始\r\n");
+	Ex->PrintfToFile((CString)"进度条操作测试开始\r\n");
 	for(int i=0;i<100;i++){
 		Sleep(100);
 		Ex->ProcessCtrl(i);
 	}
-	Ex->Printf((CString)"进度条操作测试结束\r\n");
+	Ex->PrintfToFile((CString)"进度条操作测试结束\r\n");
 	return 0;
 }
 
@@ -144,17 +176,17 @@ void Example::GetHostAddress(CString &strIPAddr)
 }
 
 void Example::NetTest(void){
-	this->Printf((CString)"网络相关测试开始\r\n");
+	this->PrintfToFile((CString)"网络相关测试开始\r\n");
 	CString IPCString;
 	this->GetHostAddress(IPCString);
 	IPCString = (CString)("本机IP地址:")+ IPCString + (CString)("\r\n");
-	this->Printf(IPCString);
-	this->Printf((CString)"网络相关测试结束\r\n");
+	this->PrintfToFile(IPCString);
+	this->PrintfToFile((CString)"网络相关测试结束\r\n");
 }
 /*************************************************************************************/
 //Windows CMD命令操作测试
 void Example::WinCMDTest(void){
-	this->Printf((CString)"Windows CMD命令测试:ipconfig\r\n");
+	this->PrintfToFile((CString)"Windows CMD命令测试:ipconfig\r\n");
 	WinExec("ipconfig", SW_HIDE);
 }
 
@@ -163,11 +195,27 @@ void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT
 	cvFillConvexPoly(img,pt2,4,CV_RGB(0,0,0)); 
 }
 
+void on_Mouse(int event, int x, int y, int flags, void *ustc)//event鼠标事件代号，x,y鼠标坐标，flags拖拽和键盘操作的代号
+{ 
+	CString TempCString;
+	Example *Ex = (Example *)ustc;
+
+	if (event == CV_EVENT_MOUSEMOVE)//移动
+	{
+		//TempCString.Format(_T("(%d,%d)\r\n"),x,y);
+		//CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
+		//MainDlg->PathEditCtrl(TempCString);
+	}else if(event == CV_EVENT_LBUTTONDOWN){	//左单击
+		TempCString.Format(_T("(%d,%d)\r\n"),x,y);
+		AfxMessageBox(TempCString);
+	}
+}
+
 void Example::OpencvTest(void)
 {
-	IplImage *img = cvLoadImage("../Input/OpencvTest.jpg");
-	cvNamedWindow("Opencv测试",CV_WINDOW_AUTOSIZE);
-	cvShowImage("Opencv测试",img);
+	//IplImage *img = cvLoadImage("../Input/OpencvTest.jpg");
+	//cvNamedWindow("Opencv测试",CV_WINDOW_AUTOSIZE);
+	//cvShowImage("Opencv测试",img);
 
 	IplImage *img2 = cvCreateImage(cvSize(800,800),8,3);
 
@@ -202,23 +250,23 @@ void Example::OpencvTest(void)
 	}
 
 	cvNamedWindow("Opencv自绘图",CV_WINDOW_AUTOSIZE);
+	cvSetMouseCallback("Opencv自绘图", on_Mouse, this);
 	cvShowImage("Opencv自绘图",img2);
 
 }
 
 //主要是CString 是 UNICODE的格式.
 void Example::FormatTest(void){
-	FormatChange FormatHandle;
 	char TestChar[] = {"Hello\r\n"};
-	CString TestCString = FormatHandle.CharToCString(TestChar);			//Char->CString
+	CString TestCString = this->g_FormatHandle.CharToCString(TestChar);			//Char->CString
 
 	CString TestCString2("How old are you?");
-	char TestChar2[100];
-	int Len = FormatHandle.CStringToChar(TestCString2,TestChar2);		//CString -> Char, Len = 17.
-
+	char TestChar2[1000];
+	int Len = this->g_FormatHandle.CStringToChar(TestCString2,TestChar2);		//CString -> Char, Len = 17.
+	
 	CString TestCString3("123456");
-	int TestInt = FormatHandle.CStringToInt(TestCString3);				//CString->Int
+	int TestInt = this->g_FormatHandle.CStringToInt(TestCString3);				//CString->Int
 
 	int TempNum = 112233;
-	CString TestCString4 = FormatHandle.IntToCString(TempNum);			//Int->CString
+	CString TestCString4 = this->g_FormatHandle.IntToCString(TempNum);			//Int->CString
 }

@@ -282,6 +282,12 @@ void CBaseVersionDlg::ProcessCtrl(int Num)
 	((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetPos(Num);//进度条数值范围0~100
 }
 
+void CBaseVersionDlg::PathEditCtrl(CString EditCString)
+{
+    SetDlgItemText(IDC_EDIT_Path, EditCString);  
+	UpdateWindow();
+}
+
 BOOL CBaseVersionDlg::Printf(CString string){
 	static CString DebugCStringAll;
 	DebugCStringAll += string;
@@ -314,6 +320,7 @@ void CBaseVersionDlg::OnBnClickedButtonOpenfile()
 void CBaseVersionDlg::OnBnClickedButtonTest()
 {
 	Example Ex;
+	Ex.Init();
 	Ex.FileOperation();
 	Ex.TimerTest();
 	Ex.ThreadTest();
@@ -322,4 +329,5 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Ex.WinCMDTest();
 	Ex.OpencvTest();
 	Ex.FormatTest();
+	Ex.Exit();
 }
