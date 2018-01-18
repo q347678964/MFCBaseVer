@@ -4,7 +4,17 @@
 
 #pragma once
 
+typedef enum MOVE_DIR
+{
+	MOVE_RIGHT,
+	MOVE_BOTTOM,
+}MOVE_DIR;
 
+typedef enum DEST_TYPE
+{
+	DEST_EDIT = 0,
+	DEST_BUTTON,
+}DEST_TYPE;
 // CBaseVersionDlg ¶Ô»°¿ò
 class CBaseVersionDlg : public CDialog
 {
@@ -34,6 +44,7 @@ protected:
 public:
 	CString g_Path;
 
+	void CBaseVersionDlg::MoveTo(CWnd **SrcWnd,CWnd **DestWnd,int DestID,DEST_TYPE DestType,MOVE_DIR MoveMethod);
 	void CBaseVersionDlg::DlgPaintInit(void);
 	BOOL CBaseVersionDlg::Printf(CString string);
 	void CBaseVersionDlg::ProcessCtrl(int Num);

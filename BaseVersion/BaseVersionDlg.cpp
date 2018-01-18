@@ -123,6 +123,49 @@ void CBaseVersionDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
+void CBaseVersionDlg::MoveTo(CWnd **SrcWnd,CWnd **DestWnd,int DestID,DEST_TYPE DestType,MOVE_DIR MoveMethod){
+	CRect RectTemp;
+
+	switch(MoveMethod){
+		case MOVE_RIGHT:
+			switch(DestType){
+				case DEST_EDIT:
+					(*SrcWnd)->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+					ScreenToClient(RectTemp);
+					(*DestWnd) = GetDlgItem(DestID);
+					(*DestWnd)->SetWindowPos( NULL,RectTemp.right+10,RectTemp.top,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口，只改变坐标，不改变大小
+					break;
+				case DEST_BUTTON:
+					(*SrcWnd)->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+					ScreenToClient(RectTemp);
+					(*DestWnd) = GetDlgItem(DestID);
+					(*DestWnd)->SetWindowPos( NULL,RectTemp.right+10,RectTemp.top,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
+					((CButton *)GetDlgItem(DestID))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));			//按钮图片
+					break;
+			}
+			break;
+		case MOVE_BOTTOM:
+			switch(DestType){
+				case DEST_EDIT:
+					(*SrcWnd)->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+					ScreenToClient(RectTemp);
+					(*DestWnd) = GetDlgItem(DestID);
+					(*DestWnd)->SetWindowPos( NULL,RectTemp.left,RectTemp.bottom+10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口，只改变坐标，不改变大小
+					break;
+				case DEST_BUTTON:
+					(*SrcWnd)->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
+					ScreenToClient(RectTemp);
+					(*DestWnd) = GetDlgItem(DestID);
+					(*DestWnd)->SetWindowPos( NULL,RectTemp.left,RectTemp.bottom+10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口，只改变坐标，不改变大小
+					((CButton *)GetDlgItem(DestID))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));			//按钮图片
+					break;
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 void CBaseVersionDlg::DlgPaintInit(void)
 {
 	CImage mImage;  
@@ -134,32 +177,15 @@ void CBaseVersionDlg::DlgPaintInit(void)
 		int WinDlgHeight = mImage.GetHeight();
 		SetWindowPos(NULL,0,0,WinDlgWidth,WinDlgHeight,SWP_NOMOVE);
 		pWnd[0] = GetDlgItem(IDC_EDIT_Debug);
-		pWnd[0]->SetWindowPos( NULL,10,10,WinDlgWidth/3,WinDlgHeight/3,SWP_NOZORDER);//调试窗口,根据窗体大小来变换
-		pWnd[0]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
-		ScreenToClient(RectTemp);
-
-		pWnd[1] = GetDlgItem(IDC_EDIT_Path);
-		pWnd[1]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径窗口，只改变坐标，不改变大小
-		pWnd[1]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
-		ScreenToClient(RectTemp);
-
-		pWnd[2] = GetDlgItem(IDC_BUTTON_OpenFile);
-		pWnd[2]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
-		((CButton *)GetDlgItem(IDC_BUTTON_OpenFile))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
-		pWnd[2]->GetWindowRect(RectTemp);//获取目标在屏幕上的坐标，需要转换到窗体坐标
-		ScreenToClient(RectTemp);
-
-		pWnd[3] = GetDlgItem(IDC_BUTTON_Test);
-		pWnd[3]->SetWindowPos( NULL,RectTemp.right+10,10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//测试按钮，只改变坐标，不改变大小
-		((CButton *)GetDlgItem(IDC_BUTTON_Test))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1)); 
-
-		pWnd[1]->GetWindowRect(RectTemp);//进度条放在路径窗口下面
-		ScreenToClient(RectTemp);
-		pWnd[3] = GetDlgItem(IDC_PROGRESS1);
-		pWnd[3]->SetWindowPos( NULL,RectTemp.left,RectTemp.bottom+10,0,0,SWP_NOZORDER|SWP_NOSIZE);	//进度条，只改变坐标，不改变大小
+		pWnd[0]->SetWindowPos( NULL,10,10,WinDlgWidth/2,WinDlgHeight/3,SWP_NOZORDER);//调试窗口,根据窗体大小来变换
+		
+		this->MoveTo(&pWnd[0],&pWnd[1],IDC_EDIT_Path,DEST_EDIT,MOVE_BOTTOM);
+		this->MoveTo(&pWnd[1],&pWnd[2],IDC_BUTTON_OpenFile,DEST_BUTTON,MOVE_RIGHT);
+		this->MoveTo(&pWnd[1],&pWnd[3],IDC_PROGRESS1,DEST_EDIT,MOVE_BOTTOM);
 		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetRange(0,100);//进度条数值范围0~100
 		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetStep(1);//进度条步进1
 		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetPos(0);//当前进度0
+		this->MoveTo(&pWnd[3],&pWnd[4],IDC_BUTTON_Test,DEST_BUTTON,MOVE_RIGHT);
 
 		//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
 		//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
@@ -221,7 +247,7 @@ void CBaseVersionDlg::OnPaint()
 		CDialog::OnPaint();
 	}
 
-	this->Printf((CString)("[Dialog]重新绘制完成!\r\n"));
+	//this->Printf((CString)("[Dialog]重新绘制完成!\r\n"));
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
