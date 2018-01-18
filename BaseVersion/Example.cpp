@@ -187,7 +187,7 @@ void Example::NetTest(void){
 //Windows CMD√¸¡Ó≤Ÿ◊˜≤‚ ‘
 void Example::WinCMDTest(void){
 	this->PrintfToFile((CString)"Windows CMD√¸¡Ó≤‚ ‘:ipconfig\r\n");
-	WinExec("ipconfig", SW_HIDE);
+	WinExec("cmd.exe /C ipconfig&&pause", SW_SHOWNORMAL);
 }
 
 void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT32 Endx,UINT32 Endy){
