@@ -4,7 +4,7 @@
 #include "FormatChange.h"
 #include "Example.h"
 #include "BaseVersionDlg.h"
-
+#include "png.h"
 
 /*************************************************************************************/
 //构造、析构函数
@@ -27,7 +27,6 @@ void Example::Exit(void)
 	this->Printf((CString)"测试结束\r\n");
 }
 
-int Sem = 1;
 void Example::LogPrintf(CString Context){
 	static int FirstInFlag = 1;
 
@@ -269,4 +268,77 @@ void Example::FormatTest(void){
 
 	int TempNum = 112233;
 	CString TestCString4 = this->g_FormatHandle.IntToCString(TempNum);			//Int->CString
+}
+
+void Example::ScanWindowTest(void){
+	FormatChange FC;
+	Png PngHdlr(IDC_STATIC);
+//1.先获得桌面窗口
+    CWnd* pDesktopWnd = CWnd::GetDesktopWindow();
+//2.获得一个子窗口
+    CWnd* pWnd = pDesktopWnd->GetWindow(GW_CHILD);
+//3.循环取得桌面下的所有子窗口
+    while(pWnd != NULL)
+    {
+       
+		WCHAR TempWchar[256];
+		char ClassTempChar[512];
+		char WinTempChar[512];
+		CString TempCString;
+		 //获得窗口类名
+		memset(TempWchar,0,sizeof(TempWchar));
+		memset(ClassTempChar,0,sizeof(ClassTempChar));
+		::GetClassName(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
+		TempCString.Format(_T("类:%ws"),TempWchar);
+		this->PrintfToFile(TempCString);
+		FC.WcharToChar(TempWchar,ClassTempChar);
+
+        //获得窗口标题
+		memset(TempWchar,0,sizeof(TempWchar));
+		memset(WinTempChar,0,sizeof(WinTempChar));
+        ::GetWindowText(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
+		TempCString.Format(_T("窗体:%ws\r\n"),TempWchar);
+		this->PrintfToFile(TempCString);
+		FC.WcharToChar(TempWchar,WinTempChar);
+#if 1
+		if(strcmp(ClassTempChar,"Photo_Lightweight_Viewer") == 0  &&  strcmp(WinTempChar,"52839202_12.png - Windows Photo Viewer") == 0){
+			pWnd = pWnd->GetWindow(GW_CHILD);
+			while(pWnd!=NULL){
+				memset(TempWchar,0,sizeof(TempWchar));
+				memset(ClassTempChar,0,sizeof(ClassTempChar));
+				::GetClassName(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
+				FC.WcharToChar(TempWchar,ClassTempChar);
+				if(strcmp(ClassTempChar,"Photos_PhotoCanvas") == 0){
+					this->ShowCwnd(pWnd,WinTempChar);
+				}
+				pWnd = pWnd->GetWindow(GW_HWNDNEXT);
+			}
+			pWnd = pWnd->GetParent();
+		}
+#endif
+        pWnd = pWnd->GetWindow(GW_HWNDNEXT);
+    }
+}
+
+void Example::PNGTest(void)
+{	
+	Png PngHdlr(IDC_STATIC);
+	PngHdlr.Open("../Input/test.png");
+}
+
+/*
+Key 37 = Left
+Key 38 = Up
+Key 39 = Right
+Key 40 = Down
+*/
+void Example::DlgMsgListen(int MessageID)
+{
+	CString TempCStirng;
+	TempCStirng.Format(_T("DlgMsgID = %d\r\n"),MessageID);
+	this->Printf(TempCStirng);
+
+	if(MessageID == 38)	//抓取控件UI测试 
+		this->ShowCwnd(this->IDToCWnd(IDC_STATIC),"Win");
+
 }

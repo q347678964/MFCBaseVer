@@ -141,6 +141,9 @@ void CBaseVersionDlg::MoveTo(CWnd **SrcWnd,CWnd **DestWnd,int DestID,DEST_TYPE D
 					(*DestWnd) = GetDlgItem(DestID);
 					(*DestWnd)->SetWindowPos( NULL,RectTemp.right+10,RectTemp.top,0,0,SWP_NOZORDER|SWP_NOSIZE);	//路径打开按钮，只改变坐标，不改变大小
 					((CButton *)GetDlgItem(DestID))->SetIcon(AfxGetApp()->LoadIcon(IDI_ICON1));			//按钮图片
+					//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
+					//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
+					//SetIcon 按钮操作函数
 					break;
 			}
 			break;
@@ -165,7 +168,14 @@ void CBaseVersionDlg::MoveTo(CWnd **SrcWnd,CWnd **DestWnd,int DestID,DEST_TYPE D
 			break;
 	}
 }
-
+/*
+[0] = 调试窗口EDIT
+[1] = 路径EDIT
+[2] = 打开文件BUTTON
+[3] = 进度条PROCESS
+[4] = 测试BUTTON
+[5] = Picture Control
+*/
 void CBaseVersionDlg::DlgPaintInit(void)
 {
 	CImage mImage;  
@@ -187,12 +197,15 @@ void CBaseVersionDlg::DlgPaintInit(void)
 		((CProgressCtrl *)GetDlgItem(IDC_PROGRESS1))->SetPos(0);//当前进度0
 		this->MoveTo(&pWnd[3],&pWnd[4],IDC_BUTTON_Test,DEST_BUTTON,MOVE_RIGHT);
 
-		//等效于这三句AfxGetApp()->LoadIcon(IDI_ICON1) 加载icon
-		//((CMFCButton *)GetDlgItem(IDC_BUTTON_OpenFile)) 获取按钮句柄
-		//SetIcon 按钮操作函数
+		this->MoveTo(&pWnd[3],&pWnd[5],IDC_STATIC,DEST_EDIT,MOVE_BOTTOM);
+		CWnd *StaticCwnd = GetDlgItem(IDC_STATIC);	//HWND->CWnd 获取空间的Cwnd用于操作空间.
+		CRect StaticRect;
+		StaticCwnd->GetWindowRect(&StaticRect);
+		ScreenToClient(&StaticRect);
+		StaticCwnd->MoveWindow(StaticRect.left,StaticRect.top,200,100,true);//设置PICTURE大小
 
 		//mImage.Draw(GetDC()->GetSafeHdc(),CRect(0,0,WinDlgWidth,WinDlgHeight));//背景，不能用这种方法绘制，会闪烁
-
+		
 		{	//背景绘制
 			CBitmap	bmpBackground;		//声明一个位图句柄
 			FormatChange FC;
@@ -224,7 +237,11 @@ void CBaseVersionDlg::DlgPaintInit(void)
 
 void CBaseVersionDlg::OnPaint()
 {
-	this->DlgPaintInit();
+	static int FirstIn = 1;
+	if(FirstIn){
+		FirstIn = 0;
+		this->DlgPaintInit();
+	}
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // 用于绘制的设备上下文
@@ -247,7 +264,7 @@ void CBaseVersionDlg::OnPaint()
 		CDialog::OnPaint();
 	}
 
-	//this->Printf((CString)("[Dialog]重新绘制完成!\r\n"));
+	this->Printf((CString)("[Dialog]重新绘制完成!\r\n"));
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -271,6 +288,9 @@ BOOL CBaseVersionDlg::PreTranslateMessage(MSG* pMsg)
                 MessageBox(_T("Hello"));  
             return TRUE;  
         }  
+
+		Example Ex;
+		Ex.DlgMsgListen(pMsg->wParam);
     }  
     return CDialog::PreTranslateMessage(pMsg);  
 }  
@@ -282,18 +302,21 @@ HBRUSH CBaseVersionDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		case IDC_EDIT_Debug:
 			pDC->SetTextColor(EDIT_PRINT_TEXT_RGB); //设置字体颜色
 			pDC->SetBkMode(TRANSPARENT);	//设置字体背景为透明，这样才能直接带看Edit的颜色
-			HBRUSH hbr= CreateSolidBrush(EDIT_PRINT_BG_RGB);// 设置背景色画刷
-			return hbr;
-		break;
+			return (HBRUSH)CreateSolidBrush(EDIT_PRINT_BG_RGB);// 设置背景色画刷
+			break;
+		case IDC_STATIC:
+			pDC->SetBkMode(TRANSPARENT);   
+			return (HBRUSH)::GetStockObject(NULL_BRUSH); 
+			break;
 	 }
+
 	// TODO: Change any attributes of the DC here
-	if (nCtlColor==CTLCOLOR_STATIC || nCtlColor==CTLCOLOR_EDIT)//如果当前控件属于静态文本
+	if (nCtlColor==CTLCOLOR_EDIT)//如果当前控件属于文本
 	{ 
-		pDC->SetTextColor(EDIT_PRINT_TEXT_RGB); //设置字体颜色
-		pDC->SetBkMode(TRANSPARENT);	//设置字体背景为透明，这样才能直接带看Edit的颜色
-		HBRUSH hbr= CreateSolidBrush(EDIT_PRINT_BG_RGB);// 设置背景色画刷
-		return hbr;
-	} 
+
+	}else if(nCtlColor==CTLCOLOR_STATIC){	//STATIC PICTURE
+
+	}
 	else if (nCtlColor==CTLCOLOR_BTN) //如果当前控件属于按钮
 	{ 
 
@@ -346,6 +369,7 @@ void CBaseVersionDlg::OnBnClickedButtonOpenfile()
 void CBaseVersionDlg::OnBnClickedButtonTest()
 {
 	Example Ex;
+	
 	Ex.Init();
 	Ex.FileOperation();
 	Ex.TimerTest();
@@ -355,5 +379,9 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Ex.WinCMDTest();
 	Ex.OpencvTest();
 	Ex.FormatTest();
+	Ex.PNGTest();
+//Ex.ScanWindowTest();
 	Ex.Exit();
+	
+	
 }

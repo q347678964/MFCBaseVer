@@ -1,11 +1,12 @@
 #ifndef EXAMPLE_H
 #define EXAMPLE_H
 
+#include "UtilityFunc.h"
 #include "cv.h"
 #include "highgui.h"
 #include "CvvImage.h"
 
-class Example {
+class Example : public UtilityFunc{
 
 public:
 	Example();
@@ -40,5 +41,11 @@ public:
 	void Example::OpencvTest(void);
 
 	void Example::FormatTest(void);
+
+	void Example::ScanWindowTest(void);
+
+	void Example::PNGTest(void);
+
+	void Example::DlgMsgListen(int MessageID);
 };
 #endif

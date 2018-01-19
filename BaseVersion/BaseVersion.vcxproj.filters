@@ -54,6 +54,12 @@
     <ClInclude Include="CvvImage.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="png.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilityFunc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseVersion.cpp">
@@ -72,6 +78,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CvvImage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="png.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilityFunc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,6 +30,11 @@ int FormatChange::CStringToChar(CString Context,char *Char){
 CString FormatChange::CharToCString(char *Char){
 	return CString(Char);
 }
+
+int FormatChange::WcharToChar(WCHAR *Wchar,char *Char){
+	sprintf(Char,"%ws",Wchar);
+	return 0;
+}
 /*
 *	CStringToInt-½«CString×ªÎªint
 *	@Context	CString
