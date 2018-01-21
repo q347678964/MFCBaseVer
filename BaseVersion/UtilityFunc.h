@@ -22,6 +22,15 @@ public:
 
 	CWnd* UtilityFunc::IDToCWnd(int HDCID);
 	CWnd* UtilityFunc::GetDlgCWnd(void);
+	void UtilityFunc::CwndToCRect(CWnd *StaticCwnd,CRect *rect);
+	void UtilityFunc::CwndToIplImage(CWnd *StaticCwnd,IplImage *DestImage);
 	void UtilityFunc::ShowCwnd(CWnd *StaticCwnd,char *WinName);
+	void UtilityFunc::XSleep(int nWaitInMsecs);
+	//Opencv
+	void UtilityFunc::SetIplImagePixel(IplImage *img,int x,int y,unsigned char *Pixel);
+	void UtilityFunc::GetIplImagePixel(IplImage *img,int x,int y,unsigned char *Pixel);
+	int UtilityFunc::PixelCompared(unsigned char *Pixel1,unsigned char *Pixel2);
+	int UtilityFunc::HSVCompared(unsigned char SrcH,unsigned char SrcS,unsigned char SrcV,unsigned char DestH,unsigned char DestS,unsigned char DestV,unsigned char DIFF);
+	void UtilityFunc::RGBToHSV(IplImage *SrcImage,IplImage *HImage,IplImage *SImage,IplImage *VImage);
 };
 #endif
