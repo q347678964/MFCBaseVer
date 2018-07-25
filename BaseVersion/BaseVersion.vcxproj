@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Files\git\MFCBase\opencvlib\build\include;D:\Files\git\MFCBase\opencvlib\build\include\opencv;D:\Files\git\MFCBase\opencvlib\build\include\opencv2;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Files\git\MFCBase\opencvlib\build\x86\vc10\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\opencvlib\build\include;$(ProjectDir)..\opencvlib\build\include\opencv;$(ProjectDir)..\opencvlib\build\include\opencv2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\opencvlib\build\x86\vc10\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
