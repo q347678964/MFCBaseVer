@@ -5,6 +5,7 @@
 #include "Example.h"
 #include "BaseVersionDlg.h"
 #include "png.h"
+#include "stdarg.h"
 
 /*************************************************************************************/
 //构造、析构函数
@@ -19,83 +20,37 @@ Example::~Example(){
 //主窗体操作
 void Example::Init(void)
 {
-	this->Printf((CString)"测试开始\r\n");
-	g_PrintfSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
+	printf("测试开始\r\n");
 }
+
 void Example::Exit(void)
 {
-	this->Printf((CString)"测试结束\r\n");
+	printf("测试结束\r\n");
 }
 
-void Example::LogPrintf(CString Context){
-	static int FirstInFlag = 1;
 
-	WaitForSingleObject(g_PrintfSemaphore, INFINITE);
 
-	char Data[1000];
-	int Len = g_FormatHandle.CStringToChar(Context,Data);
-
-	if(FirstInFlag){
-		FirstInFlag = 0;
-		CFile LogFile(_T("../Output/Log.txt"),CFile::modeCreate | CFile::modeReadWrite);
-		LogFile.Write(Data,Len);
-		LogFile.Close();
-	}else{
-		CFile LogFile(_T("../Output/Log.txt"),CFile::modeReadWrite);
-		LogFile.SeekToEnd();
-		LogFile.Write(Data,Len);
-		LogFile.Close();
-	}
-
-	ReleaseSemaphore(g_PrintfSemaphore, 1, NULL);
-}
-
-/*	PrintfToFile - 将Log打印到文件当中
-*	
-*/
-void Example::PrintfToFile(CString Context){
-	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
-	CString m_strTime = time.Format(_T("[%H:%M:%S]"));
-
-	Context = m_strTime + (CString)("[Example]") + Context;
-    this->LogPrintf(Context);
-}
-
-void Example::Printf(CString Context){
-	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
-	CString m_strTime = time.Format(_T("[%H:%M:%S]"));
-
-	Context = m_strTime + (CString)("[Example]") + Context;
-    CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
-	MainDlg->Printf(Context);
-}
-
-void Example::ProcessCtrl(int Num){
-
-    CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
-	MainDlg->ProcessCtrl(Num);
-}
 /*************************************************************************************/
 //线程测试
-DWORD WINAPI ThreadProc(LPVOID pParam)
+DWORD WINAPI ThreadTestProc(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->PrintfToFile((CString)"线程休眠\r\n");
+	Ex->PrintfFile("[Example][ThreadTestProc]线程休眠\r\n");
 	Sleep(1000);
-	Ex->PrintfToFile((CString)"线程结束\r\n");
+	Ex->PrintfFile("[Example][ThreadTestProc]线程结束\r\n");
 	return 0;
 }
 
 void Example::ThreadTest(void){
-	this->PrintfToFile((CString)"线程测试开始\r\n");
-	AfxBeginThread((AFX_THREADPROC)ThreadProc,this,THREAD_PRIORITY_HIGHEST);
-	this->PrintfToFile((CString)"线程已经创建\r\n");
+	printffile("线程测试开始\r\n");
+	AfxBeginThread((AFX_THREADPROC)ThreadTestProc,this,THREAD_PRIORITY_HIGHEST);
+	printffile("线程已经创建\r\n");
 }
 /*************************************************************************************/
 //时间操作测试
 void Example::TimerTest(void){
 
-	this->PrintfToFile((CString)"时间测试开始\r\n");
+	printffile("时间测试开始\r\n");
 
 	clock_t TimeStart,TimeEnd;
 	unsigned int TimeSpend;
@@ -105,9 +60,7 @@ void Example::TimerTest(void){
 
 	TimeSpend = TimeEnd - TimeStart;
 
-	CString TempCString;
-	TempCString.Format(_T("时间间隔:%u毫秒\r\n"),TimeSpend);
-	this->PrintfToFile(TempCString);
+	printffile("时间间隔:%u毫秒\r\n",TimeSpend);
 
 	CTime time = CTime::GetCurrentTime();   ///构造CTime对象
 #if 0
@@ -120,36 +73,43 @@ void Example::TimerTest(void){
 #endif
 	CString m_strTime = time.Format("%Y-%m-%d %H:%M:%S");
 	m_strTime += (CString)("\r\n");
-	this->PrintfToFile(m_strTime);
-	this->PrintfToFile((CString)"时间测试完成\r\n");
+	printfcstringfile(m_strTime);
+	printffile("时间测试完成\r\n");
 
 }
 
 /*************************************************************************************/
 //文件操作测试
 void Example::FileOperation(void){
-	this->PrintfToFile((CString)"文件操作测试开始\r\n");
+	printffile("文件操作测试开始\r\n");
 
 	const char data[] = {"This is a test program"};
 	CFile mFile(_T("../Output/Test.txt"),CFile::modeCreate | CFile::modeReadWrite);
 	mFile.Write(data,sizeof(data));
 	mFile.Close();
 
-	this->PrintfToFile((CString)"文件操作测试完成\r\n");
+	printffile("文件操作测试完成\r\n");
 
 }
 
 /*************************************************************************************/
 //进度条测试
+
+void Example::ProcessCtrl(int Num){
+
+    CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
+	MainDlg->ProcessCtrl(Num);
+}
+
 DWORD WINAPI ProcessTestThread(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->PrintfToFile((CString)"进度条操作测试开始\r\n");
+	Ex->PrintfFile("[Example][ProcessTestThread]进度条操作测试开始\r\n");
 	for(int i=0;i<100;i++){
 		Sleep(100);
 		Ex->ProcessCtrl(i);
 	}
-	Ex->PrintfToFile((CString)"进度条操作测试结束\r\n");
+	Ex->PrintfFile("[Example][ProcessTestThread]进度条操作测试结束\r\n");
 	return 0;
 }
 
@@ -175,17 +135,17 @@ void Example::GetHostAddress(CString &strIPAddr)
 }
 
 void Example::NetTest(void){
-	this->PrintfToFile((CString)"网络相关测试开始\r\n");
+	printffile("网络相关测试开始\r\n");
 	CString IPCString;
 	this->GetHostAddress(IPCString);
 	IPCString = (CString)("本机IP地址:")+ IPCString + (CString)("\r\n");
-	this->PrintfToFile(IPCString);
-	this->PrintfToFile((CString)"网络相关测试结束\r\n");
+	printfcstringfile(IPCString);
+	printffile("网络相关测试结束\r\n");
 }
 /*************************************************************************************/
 //Windows CMD命令操作测试
 void Example::WinCMDTest(void){
-	this->PrintfToFile((CString)"Windows CMD命令测试:ipconfig\r\n");
+	printffile("Windows CMD命令测试:ipconfig\r\n");
 	WinExec("cmd.exe /C ipconfig&&pause", SW_SHOWNORMAL);
 }
 
@@ -290,7 +250,7 @@ void Example::ScanWindowTest(void){
 		memset(ClassTempChar,0,sizeof(ClassTempChar));
 		::GetClassName(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
 		TempCString.Format(_T("类:%ws"),TempWchar);
-		this->PrintfToFile(TempCString);
+		printfcstringfile(TempCString);
 		FC.WcharToChar(TempWchar,ClassTempChar);
 
         //获得窗口标题
@@ -298,7 +258,7 @@ void Example::ScanWindowTest(void){
 		memset(WinTempChar,0,sizeof(WinTempChar));
         ::GetWindowText(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
 		TempCString.Format(_T("窗体:%ws\r\n"),TempWchar);
-		this->PrintfToFile(TempCString);
+		printfcstringfile(TempCString);
 		FC.WcharToChar(TempWchar,WinTempChar);
 #if 1
 		if(strcmp(ClassTempChar,"Photo_Lightweight_Viewer") == 0  &&  strcmp(WinTempChar,"52839202_12.png - Windows Photo Viewer") == 0){
@@ -334,9 +294,7 @@ Key 40 = Down
 */
 void Example::DlgMsgListen(int MessageID)
 {
-	CString TempCStirng;
-	TempCStirng.Format(_T("DlgMsgID = %d\r\n"),MessageID);
-	this->Printf(TempCStirng);
+	this->Printf("DlgMsgID = %d\r\n",MessageID);
 
 	if(MessageID == 38)	//抓取控件UI测试 
 		this->ShowCwnd(this->IDToCWnd(IDC_STATIC),"Win");

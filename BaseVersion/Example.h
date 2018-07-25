@@ -6,20 +6,22 @@
 #include "highgui.h"
 #include "CvvImage.h"
 
+#define printf(fmg,...)				this->UtilityFunc::Printf("[Example]"fmg,__VA_ARGS__)
+#define printfcstring(cstring)		this->UtilityFunc::PrintfCString(CString("[Example]")+cstring)
+
+#define printffile(fmg,...)			this->UtilityFunc::PrintfFile("[Example]"fmg,__VA_ARGS__)
+#define printfcstringfile(cstring)	this->UtilityFunc::PrintfCStringToFile(CString("[Example]")+cstring)
+
 class Example : public UtilityFunc{
 
 public:
 	Example();
 	~Example();
-	HANDLE g_PrintfSemaphore;
+
 	FormatChange g_FormatHandle;
 
 	void Example::Init(void);
 	void Example::Exit(void);
-
-	void Example::LogPrintf(CString Context);
-	void Example::PrintfToFile(CString Context);
-	void Example::Printf(CString Context);
 
 	void Example::ProcessCtrl(int Num);
 
