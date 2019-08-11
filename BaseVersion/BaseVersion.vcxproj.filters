@@ -60,6 +60,15 @@
     <ClInclude Include="UtilityFunc.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Logindlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MailClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NetControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseVersion.cpp">
@@ -84,6 +93,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UtilityFunc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Logindlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MailClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NetControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

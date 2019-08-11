@@ -68,3 +68,21 @@ void FormatChange::Hbitmap2CBitmap(HBITMAP &Hbitmap,CBitmap &Bitmap){		//Hbitmap
 void FormatChange::CBitmap2Hbitmap(CBitmap &Bitmap,HBITMAP &Hbitmap){		//Cbitmap -> Hbitmap
 	Hbitmap=(HBITMAP)Bitmap;
 }
+
+
+
+wchar_t* FormatChange::GB2312ToUnicode(const char* szGBString)
+{
+    UINT nCodePage = 936; //GB2312
+ 
+    int nLength=MultiByteToWideChar(nCodePage,0,szGBString,-1,NULL,0);
+ 
+    wchar_t* pBuffer = new wchar_t[nLength+1];
+ 
+    MultiByteToWideChar(nCodePage,0,szGBString,-1,pBuffer,nLength);
+ 
+    pBuffer[nLength]=0;
+ 
+    return pBuffer;
+}
+ 

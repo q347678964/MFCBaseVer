@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "BaseVersion.h"
 #include "BaseVersionDlg.h"
+#include "Logindlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,18 +68,29 @@ BOOL CBaseVersionApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CBaseVersionDlg dlg;
-	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
+	Logindlg Login;
+	//m_pMainWnd = &Login;
+	INT_PTR nResponse = Login.DoModal();
 	if (nResponse == IDOK)
 	{
-		// TODO: 在此放置处理何时用
-		//  “确定”来关闭对话框的代码
+		CBaseVersionDlg dlg;
+		m_pMainWnd = &dlg;
+		nResponse = dlg.DoModal();
+	
+		if (nResponse == IDOK)
+		{
+			// TODO: 在此放置处理何时用
+			//  “确定”来关闭对话框的代码
+		}
+		else if (nResponse == IDCANCEL)
+		{
+			// TODO: 在此放置处理何时用
+			//  “取消”来关闭对话框的代码
+		}
 	}
 	else if (nResponse == IDCANCEL)
 	{
-		// TODO: 在此放置处理何时用
-		//  “取消”来关闭对话框的代码
+
 	}
 
 	// 删除上面创建的 shell 管理器。

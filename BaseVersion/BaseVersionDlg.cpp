@@ -371,6 +371,7 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Example Ex;
 	
 	Ex.Init();
+	
 	Ex.FileOperation();
 	Ex.TimerTest();
 	Ex.ThreadTest();
@@ -380,7 +381,9 @@ void CBaseVersionDlg::OnBnClickedButtonTest()
 	Ex.OpencvTest();
 	Ex.FormatTest();
 	Ex.PNGTest();
-//Ex.ScanWindowTest();
+	
+	//Ex.SendEmail();
+	//Ex.ScanWindowTest();
 	Ex.Exit();
 	
 	

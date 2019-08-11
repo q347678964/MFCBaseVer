@@ -4,6 +4,9 @@
 
 #pragma once
 
+#ifndef BASE_VERSION_DLG_H
+#define BASE_BERSION_DLG_H
+
 typedef enum MOVE_DIR
 {
 	MOVE_RIGHT,
@@ -53,3 +56,5 @@ public:
 	afx_msg void OnBnClickedButtonOpenfile();
 	afx_msg void OnBnClickedButtonTest();
 };
+
+#endif

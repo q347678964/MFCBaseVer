@@ -12,7 +12,7 @@
 #define printffile(fmg,...)			this->UtilityFunc::PrintfFile("[Example]"fmg,__VA_ARGS__)
 #define printfcstringfile(cstring)	this->UtilityFunc::PrintfCStringToFile(CString("[Example]")+cstring)
 
-class Example : public UtilityFunc{
+class Example : public UtilityFunc, public FormatChange{
 
 public:
 	Example();
@@ -33,7 +33,6 @@ public:
 
 	void Example::ProcessTest(void);
 
-	void Example::GetHostAddress(CString &strIPAddr);
 	void Example::NetTest(void);
 
 	void Example::WinCMDTest(void);
@@ -49,5 +48,7 @@ public:
 	void Example::PNGTest(void);
 
 	void Example::DlgMsgListen(int MessageID);
+
+	void Example::SendEmail(void);
 };
 #endif
